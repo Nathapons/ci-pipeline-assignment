@@ -1,0 +1,36 @@
+name: CI Pipeline Assignment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Deploy
+        run: |
+          echo "Deploying to production..."
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2  # ใช้ Action ของ SonarCloud สำหรับสแกนโค้ด
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # ใช้ token ที่เก็บไว้ใน GitHub Secret
+        with:
+          projectBaseDir: .  # ระบุ root ของโปรเจคที่มีไฟล์ sonar-project.properties
