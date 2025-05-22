@@ -38,15 +38,12 @@ describe("GET /posts", () => {
 
   it('should filter posts by keyword title', async () => {
     const keyword = blogPosts[0].title;
-    const regex = new RegExp(keyword.toLowerCase(), 'i');
     const res = await request(app).get(`/posts?keyword=${keyword}`);
     expect(res.statusCode).toBe(200);
     res.body.posts.forEach(post => {
-      const containsKeyword = regex.test(post.title) || 
-        regex.test(post.description) || 
-        regex.test(post.content) || 
-        regex.test(post.category);
-      expect(containsKeyword).toBe(true);
+      const containsKeyword = (post.title + ' ' + post.description + ' ' + 
+                          post.content + ' ' + post.category).toLowerCase();
+      expect(containsKeyword.includes(keywordLower)).toBe(true);
     });
   });
 

@@ -3,7 +3,6 @@ import cors from "cors";
 import { blogPosts } from "./db/index.mjs";
 
 const app = express();
-const port = process.env.PORT || 4001;
 
 app.use(cors({
      origin: ['https://yourdomain.com', 'https://anotherdomain.com'],
@@ -33,13 +32,12 @@ app.get("/posts", (req, res) => {
     }
 
     if (keyword) {
-      const regex = new RegExp(keyword.toLowerCase(), 'i'); // i flag = case insensitive
-      filteredPosts = filteredPosts.filter(post => 
-        regex.test(post.title) || 
-        regex.test(post.description) || 
-        regex.test(post.content) || 
-        regex.test(post.category)
-      );
+      const keywordLower = keyword.toLowerCase();
+      filteredPosts = filteredPosts.filter(post => {
+        const searchText = (post.title + ' ' + post.description + ' ' + 
+                          post.content + ' ' + post.category).toLowerCase();
+        return searchText.includes(keywordLower);
+      });
     }
 
     const startIndex = (safePage - 1) * safeLimit;
