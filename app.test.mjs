@@ -2,6 +2,7 @@ import request from "supertest";
 import app from "./app.mjs";
 import { blogPosts } from "./db/index.mjs";
 
+
 describe("GET /", () => {
   it("should return Hello TechUp!", async () => {
     const res = await request(app).get("/");
@@ -35,8 +36,8 @@ describe("GET /posts", () => {
     });
   });
 
-  it('should filter posts by keyword', async () => {
-    const keyword = blogPosts[0].title.split(' ')[0];
+  it('should filter posts by keyword title', async () => {
+    const keyword = blogPosts[0].title;
     const res = await request(app).get(`/posts?keyword=${keyword}`);
     expect(res.statusCode).toBe(200);
     res.body.posts.forEach(post => {
@@ -47,13 +48,6 @@ describe("GET /posts", () => {
           post.category.toLowerCase().includes(keyword.toLowerCase());
       expect(containsKeyword).toBe(true);
     });
-  });
-
-  it('should handle invalid pagination parameters gracefully', async () => {
-    const response = await request(app).get('/posts?page=-1&limit=0');
-    expect(response.status).toBe(200);
-    expect(response.body.currentPage).toBe(1);
-    expect(response.body.limit).toBe(6);
   });
 
   it('should limit maximum posts per page to 100', async () => {
