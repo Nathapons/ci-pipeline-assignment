@@ -62,7 +62,8 @@ describe("GET /posts", () => {
     Array.prototype.filter = function() { throw new Error('Test error'); };
     
     const res = await request(app).get('/posts?category=test');
-    expect(res.body).toHaveProperty('message', 'Test error');
+    expect(res.statusCode).toBe(500);
+    expect(res.body).toHaveProperty('message', 'An internal server error occurred');
     
     // Restore original implementation
     Array.prototype.filter = originalFilter;
@@ -74,6 +75,12 @@ describe("GET /posts/:id", () => {
     const res = await request(app).get("/posts/1");
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty("id", 1);
+  });
+
+  it("should return 404 if query params is not integer", async () => {
+    const res = await request(app).get("/posts/haha");
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty("error", "Invalid ID");
   });
 
   it("should return 404 if post does not exist", async () => {
