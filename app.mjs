@@ -33,12 +33,12 @@ app.get("/posts", (req, res) => {
     }
 
     if (keyword) {
-      const keywordLower = keyword.toLowerCase();
-      filteredPosts = filteredPosts.filter(
-        (post) => post.title.toLowerCase().includes(keywordLower) ||
-         post.description.toLowerCase().includes(keywordLower) ||
-         post.content.toLowerCase().includes(keywordLower) ||
-         post.category.toLowerCase().includes(keywordLower)
+      const regex = new RegExp(keyword.toLowerCase(), 'i'); // i flag = case insensitive
+      filteredPosts = filteredPosts.filter(post => 
+        regex.test(post.title) || 
+        regex.test(post.description) || 
+        regex.test(post.content) || 
+        regex.test(post.category)
       );
     }
 
