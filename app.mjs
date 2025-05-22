@@ -33,12 +33,12 @@ app.get("/posts", (req, res) => {
     }
 
     if (keyword) {
-      const regex = new RegExp(keyword, 'i');
+      const keywordLower = keyword.toLowerCase();
       filteredPosts = filteredPosts.filter(
-        (post) => regex.test(post.title) ||
-         regex.test(post.description) ||
-         regex.test(post.content) ||
-         regex.test(post.category)
+        (post) => post.title.toLowerCase().includes(keywordLower) ||
+         post.description.toLowerCase().includes(keywordLower) ||
+         post.content.toLowerCase().includes(keywordLower) ||
+         post.category.toLowerCase().includes(keywordLower)
       );
     }
 
