@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.mjs",
     "devStart": "nodemon server.mjs",
-    "test": "node --experimental-vm-modules node_modules/.bin/jest --coverage"
+    "test": "node --no-warnings --experimental-vm-modules node_modules/.bin/jest --coverage"
   },
   "keywords": [],
   "author": "",

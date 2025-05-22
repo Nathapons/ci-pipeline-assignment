@@ -5,8 +5,11 @@ import { blogPosts } from "./db/index.mjs";
 const app = express();
 const port = process.env.PORT || 4001;
 
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+     origin: ['https://yourdomain.com', 'https://anotherdomain.com'],
+     methods: ['GET', 'POST', 'PUT', 'DELETE']
+}));
+app.use(express.json({ limit: '1mb' }));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -14,7 +17,7 @@ app.get("/", (req, res) => {
 
 app.get("/posts", (req, res) => {
   try {
-    const page = Number(req.query.page) || 1;
+    const page = parseInt(req.query.page) || 1;
     const limit = Number(req.query.limit) || 6;
     const category = req.query.category || "";
     const keyword = req.query.keyword || "";
@@ -30,12 +33,12 @@ app.get("/posts", (req, res) => {
     }
 
     if (keyword) {
+      const regex = new RegExp(keyword, 'i');
       filteredPosts = filteredPosts.filter(
-        (post) =>
-          post.title.toLowerCase().includes(keyword.toLowerCase()) ||
-          post.description.toLowerCase().includes(keyword.toLowerCase()) ||
-          post.content.toLowerCase().includes(keyword.toLowerCase()) ||
-          post.category.toLowerCase().includes(keyword.toLowerCase())
+        (post) => regex.test(post.title) ||
+         regex.test(post.description) ||
+         regex.test(post.content) ||
+         regex.test(post.category)
       );
     }
 
@@ -60,14 +63,17 @@ app.get("/posts", (req, res) => {
 
     return res.json(results);
   } catch (e) {
-    return res.json({
-      message: e.message,
-    });
+     return res.status(500).json({
+       message: "An internal server error occurred"
+     });
   }
 });
 
 app.get("/posts/:id", (req, res) => {
   const id = parseInt(req.params.id);
+  if (isNaN(id)) {
+    return res.status(404).json({ error: "Invalid ID" });
+  }
   const post = blogPosts.find((post) => post.id === id);
 
   if (!post) {
