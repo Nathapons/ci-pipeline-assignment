@@ -38,6 +38,7 @@ describe("GET /posts", () => {
 
   it('should filter posts by keyword title', async () => {
     const keyword = blogPosts[0].title;
+    const keywordLower = keyword.toLowerCase();
     const res = await request(app).get(`/posts?keyword=${keyword}`);
     expect(res.statusCode).toBe(200);
     res.body.posts.forEach(post => {
