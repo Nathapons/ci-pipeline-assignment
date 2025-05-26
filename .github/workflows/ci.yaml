@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout repository
@@ -29,8 +29,8 @@ jobs:
           echo "Deploying to production..."
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2  # ใช้ Action ของ SonarCloud สำหรับสแกนโค้ด
+        uses: SonarSource/sonarcloud-github-action@v2
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # ใช้ token ที่เก็บไว้ใน GitHub Secret
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          projectBaseDir: .  # ระบุ root ของโปรเจคที่มีไฟล์ sonar-project.properties
+          projectBaseDir: .
