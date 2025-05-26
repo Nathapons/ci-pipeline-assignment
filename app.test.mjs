@@ -4,10 +4,12 @@ import { blogPosts } from "./db/index.mjs";
 
 
 describe("GET /", () => {
-  it("should return Hello TechUp!", async () => {
-    const res = await request(app).get("/");
+  it("should return query params", async () => {
+    const name = "John";
+    const age = 30;
+    const res = await request(app).get(`/?name=${name}&age=${age}`);
     expect(res.statusCode).toBe(200);
-    expect(res.text).toBe("Hello World!");
+    expect(res.body).toEqual({ name, age: age.toString()});
   });
 });
 
