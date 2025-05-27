@@ -11,7 +11,8 @@ app.use(cors({
 app.use(express.json({ limit: '1mb' }));
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  const query = req.query;
+  res.status(200).json(query);
 });
 
 app.get("/posts", (req, res) => {

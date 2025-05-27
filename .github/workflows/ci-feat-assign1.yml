@@ -3,7 +3,7 @@ name: CI Pipeline Assignment
 on:
   push:
     branches:
-      - main
+      - feat_assign1
 
 jobs:
   build:
