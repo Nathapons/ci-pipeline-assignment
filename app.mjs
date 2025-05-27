@@ -21,9 +21,18 @@ app.get("/posts", (req, res) => {
     const limit = Number(req.query.limit) || 6;
     const category = req.query.category || "";
     const keyword = req.query.keyword || "";
+    const id = req.query.id || "";
 
     const safePage = Math.max(1, page);
     const safeLimit = Math.max(1, Math.min(100, limit));
+
+    if (id) {
+      const post = blogPosts.find((post) => post.id === Number(id));
+      if (!post) {
+        return res.status(404).json({ error: "Blog post not found" });
+      }
+      return res.status(200).json(post);
+    }
 
     let filteredPosts = blogPosts;
     if (category) {
@@ -66,20 +75,6 @@ app.get("/posts", (req, res) => {
        message: "An internal server error occurred"
      });
   }
-});
-
-app.get("/posts/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  if (isNaN(id)) {
-    return res.status(404).json({ error: "Invalid ID" });
-  }
-  const post = blogPosts.find((post) => post.id === id);
-
-  if (!post) {
-    return res.status(404).json({ error: "Blog post not found" });
-  }
-
-  res.json(post);
 });
 
 export default app;
