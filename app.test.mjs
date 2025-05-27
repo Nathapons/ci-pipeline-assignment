@@ -19,6 +19,23 @@ describe("GET /posts", () => {
     expect(res.body).toHaveProperty("totalPosts");
   });
 
+  it("should return a specific post when valid id is provided", async () => {
+    const testPost = blogPosts[0];
+    const res = await request(app).get(`/posts?id=${testPost.id}`);
+    expect(res.statusCode).toBe(200);
+    
+    // Create a copy of testPost with date as string for comparison
+    const expectedPost = { ...testPost, date: testPost.date.toISOString() };
+    expect(res.body).toEqual(expectedPost);
+  });
+
+  it("should return 404 when post id does not exist", async () => {
+    const id = 999;
+    const res = await request(app).get(`/posts?id=${id}`);
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty("error", "Blog post not found");
+  });
+
   it("should handle custom pagination parameters", async() => {
     const res = await request(app).get("/posts?page=2&limit=5");
     expect(res.statusCode).toBe(200);
@@ -65,25 +82,5 @@ describe("GET /posts", () => {
     
     // Restore original implementation
     Array.prototype.filter = originalFilter;
-  });
-});
-
-describe("GET /posts/:id", () => {
-  it("should return a post if it exists", async () => {
-    const res = await request(app).get("/posts/1");
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty("id", 1);
-  });
-
-  it("should return 404 if query params is not integer", async () => {
-    const res = await request(app).get("/posts/haha");
-    expect(res.statusCode).toBe(404);
-    expect(res.body).toHaveProperty("error", "Invalid ID");
-  });
-
-  it("should return 404 if post does not exist", async () => {
-    const res = await request(app).get("/posts/99999");
-    expect(res.statusCode).toBe(404);
-    expect(res.body).toHaveProperty("error", "Blog post not found");
   });
 });
