@@ -1,121 +1,133 @@
-# Blog API
+# CI Pipeline Assignment
 
-A RESTful API for managing blog posts with pagination, filtering, and search capabilities.
+This repository contains a Node.js Express application with a complete CI/CD pipeline implementation using GitHub Actions.
 
-## Features
+## Project Overview
 
-- Get all blog posts with pagination
+This is a simple blog API service built with Express.js that allows users to:
+- Retrieve blog posts
 - Filter posts by category
 - Search posts by keyword
-- Get individual post details
-- CORS protection
-- Error handling
-- CI/CD pipeline with GitHub Actions
-- Code quality analysis with SonarCloud
+- Paginate through results
+
+The project demonstrates a modern CI/CD workflow with automated testing, code quality analysis, and deployment to Google Cloud Run.
 
 ## Tech Stack
 
-- Node.js
-- Express.js
-- Jest (Testing)
-- GitHub Actions (CI/CD)
-- SonarCloud (Code Quality)
-- Vercel (Deployment)
+- **Backend**: Node.js with Express
+- **Testing**: Jest with Supertest
+- **Code Quality**: SonarCloud
+- **CI/CD**: GitHub Actions
+- **Deployment**: Google Cloud Run
 
 ## API Endpoints
 
-### Get all posts
-```
-GET /posts
-```
-
-Query parameters:
-- `page`: Page number (default: 1)
-- `limit`: Number of posts per page (default: 6, max: 100)
-- `category`: Filter by category
-- `keyword`: Search in title, description, content, and category
-
-Response:
-```json
-{
-  "totalPosts": 30,
-  "totalPages": 5,
-  "currentPage": 1,
-  "limit": 6,
-  "posts": [...],
-  "nextPage": 2
-}
-```
-
-### Get a specific post
-```
-GET /posts/:id
-```
-
-Response:
-```json
-{
-  "id": 1,
-  "image": "https://example.com/image.jpg",
-  "category": "General",
-  "title": "Post Title",
-  "description": "Post description",
-  "author": "Author Name",
-  "date": "2024-09-11T00:00:00.000Z",
-  "likes": 321,
-  "content": "Post content..."
-}
-```
-
-## Installation
-
-1. Clone the repository
-```bash
-git clone <repository-url>
-cd ci-pipeline-assignment
-```
-
-2. Install dependencies
-```bash
-npm install
-```
-
-3. Start the server
-```bash
-npm start
-```
-
-The server will run on port 4001 by default or the port specified in the PORT environment variable.
-
-## Development
-
-Start the server with hot-reload:
-```bash
-npm run devStart
-```
-
-## Testing
-
-Run tests with Jest:
-```bash
-npm test
-```
+- `GET /`: Returns query parameters as JSON
+- `GET /posts`: Returns blog posts with filtering and pagination
+  - Query parameters:
+    - `page`: Page number (default: 1)
+    - `limit`: Number of posts per page (default: 6, max: 100)
+    - `category`: Filter by category
+    - `keyword`: Search in title, description, content, and category
+    - `id`: Get a specific post by ID
 
 ## CI/CD Pipeline
 
-This project uses GitHub Actions for continuous integration and deployment:
+The project includes a comprehensive CI/CD pipeline that:
 
-1. Checkout code
-2. Set up Node.js environment
-3. Install dependencies
-4. Run tests
-5. Deploy to production
-6. Run SonarCloud analysis for code quality
+1. **Builds** the application on every push to the main branch
+2. **Tests** the application using Jest
+3. **Analyzes** code quality using SonarCloud
+4. **Deploys** the application to Google Cloud Run
 
-## Deployment
+### Pipeline Workflow
 
-The API is configured for deployment on Vercel using the configuration in `vercel.json`.
+```yaml
+name: CI Pipeline Assignment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Deploy to Cloud Run
+        if: ${{ github.event_name == 'push' }}
+        # Deployment steps to Google Cloud Run
+```
+
+## Local Development
+
+### Prerequisites
+
+- Node.js 18 or higher
+- npm
+
+### Setup
+
+1. Clone the repository:
+   ```
+   git clone git@github.com:Nathapons/ci-pipeline-assignment.git
+   cd ci-pipeline-assignment
+   ```
+
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+3. Run the development server:
+   ```
+   npm run devStart
+   ```
+
+4. Run tests:
+   ```
+   npm test
+   ```
+
+## Environment Variables
+
+For deployment, the following secrets need to be configured in GitHub:
+
+- `SONAR_TOKEN`: Token for SonarCloud analysis
+- `GCP_SA_KEY`: Google Cloud service account key
+- `GCP_PROJECT_ID`: Google Cloud project ID
+- `CLOUD_RUN_SERVICE_NAME`: Name of the Cloud Run service
+- `GCP_REGION`: Google Cloud region for deployment
+
+## Security Features
+
+- CORS configuration with specific origins and methods
+- Request size limiting
+- Input validation and sanitization
+- Error handling
 
 ## License
 
-ISC
+Nuthapon.S
