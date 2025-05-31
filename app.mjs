@@ -5,7 +5,7 @@ import { blogPosts } from "./db/index.mjs";
 const app = express();
 
 app.use(cors({
-     origin: ['https://yourdomain.com', 'https://anotherdomain.com'],
+     origin: ['https://yourdomain.com', 'https://anotherdomain.com', 'https://blog-post-191417530475.asia-southeast1.run.app/'],
      methods: ['GET', 'POST', 'PUT', 'DELETE']
 }));
 app.use(express.json({ limit: '1mb' }));
